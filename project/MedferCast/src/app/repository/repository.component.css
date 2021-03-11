@@ -1,0 +1,7 @@
+#container-code{
+    margin: 0 auto;
+    display: block;
+    width: fit-content;
+    border: solid 1px;
+    padding: 1vmax;
+}

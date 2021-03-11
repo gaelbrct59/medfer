@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from '@angular/core';
+import { Router, RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-view',
@@ -8,17 +9,16 @@ import { Component, Input, OnInit } from '@angular/core';
 export class ViewComponent implements OnInit {
   
   code: string;
-  constructor() { 
+  constructor(private route:Router) { 
     this.code = ""
   }
 
   ngOnInit(): void {
-    console.log(this.code);
   }
 
   getCode(){
     if(this.code.length > 0){
-      console.log(this.code);
+      this.route.navigate(['/repository'], {queryParams: {code: this.code}});
     }
   }
 
