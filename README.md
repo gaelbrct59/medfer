@@ -1,7 +1,7 @@
 Auteur
 ======
 
-Gaël Bricout
+Gaël Bricout & Anthony Lafolie
 
 # Presentation
 Dans le cadre de mon mémoire, dont le sujet est "**Exploration des systèmes interopérables qui dépassent la limite d’un écran ou d’un système d’exploitation**", j'ai souhaité mettre en pratique mes découvertes, et de reproduire des expérimentations.
