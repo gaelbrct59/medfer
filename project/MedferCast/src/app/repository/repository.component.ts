@@ -8,8 +8,10 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 })
 export class RepositoryComponent implements OnInit {
   code: string;
+  url: string | ArrayBuffer;
   constructor(private route:ActivatedRoute) {
-    this.code = "ddd";
+    this.code = "";
+    this.url = null;
    }
 
   ngOnInit(): void {
@@ -18,6 +20,18 @@ export class RepositoryComponent implements OnInit {
     .subscribe(params => {
       this.code = params['code'];
     })
+  }
+
+  addMedia(): void{
+    document.getElementById('attachment').click();
+  }
+
+  fileSelected(e: File[]): void{
+    if(e.length >  0){
+      var reader = new FileReader();
+      reader.readAsDataURL(e[0]);
+      reader.onload = (_event) => {this.url = _event.target.result;}
+    }
   }
 
 }
