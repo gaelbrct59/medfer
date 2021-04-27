@@ -9,9 +9,10 @@
 <body>
     <div id="container">
         <div id="container-code" class="lead">code : {{code}}</div>
-        <img id="container-media" [src]="url">
+        <img id="container-media" [src]="webSocketService.image">
         <input type="file" class="btn btn-primary file" id="attachment" style="display: none;" (change)="fileSelected($event.target.files)" accept="video/*,image/*"/>
         <input type="button" class="btn btn-primary file" id="btnAttachment" (click)="addMedia()" value="File"/>
     </div>
 </body>
 </html>
+
