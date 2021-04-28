@@ -12,7 +12,7 @@ export class WebSocketService {
   constructor() { }
 
   public openWebSocket(){
-    this.webSocket = new WebSocket('ws://localhost:2121');
+    this.webSocket = new WebSocket('ws://0.0.0.0:2121');
 
     this.webSocket.onopen = (event) => {
       console.log('Open: ', event);
