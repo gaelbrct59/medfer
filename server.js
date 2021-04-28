@@ -1,4 +1,3 @@
-alert("up");
 //Use ws, a Node.js WebSocket library
 const path = require('path');
 const express = require('express');
