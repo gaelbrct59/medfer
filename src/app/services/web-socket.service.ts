@@ -15,7 +15,7 @@ export class WebSocketService {
   public openWebSocket(){
     var HOST = location.origin.replace(/^http/, 'ws')
     //this.webSocket = new WebSocket('ws://0.0.0.0:2121');
-    this.webSocket = new WebSocket(HOST + ':2121');
+    this.webSocket = new WebSocket(HOST);
     
     this.webSocket.onopen = (event) => {
       console.log('Open: ', event);
