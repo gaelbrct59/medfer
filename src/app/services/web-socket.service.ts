@@ -6,14 +6,17 @@ import { Injectable } from '@angular/core';
 export class WebSocketService {
 
   webSocket: WebSocket;
+  
   chatMessages: string[] = [];
   image: string | ArrayBuffer = "";
 
   constructor() { }
 
   public openWebSocket(){
-    this.webSocket = new WebSocket('ws://0.0.0.0:2121');
-
+    var HOST = location.origin.replace(/^http/, 'ws')
+    //this.webSocket = new WebSocket('ws://0.0.0.0:2121');
+    this.webSocket = new WebSocket(HOST + ':2121');
+    
     this.webSocket.onopen = (event) => {
       console.log('Open: ', event);
     };
