@@ -25,7 +25,7 @@ export class WebSocketService {
         protocol = 'ws://';
     }
 
-    this.webSocket = new WebSocket(protocol + window.location.host + ':2121');
+    this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws') +  ':2121');
 
 
     this.webSocket.onopen = (event) => {
