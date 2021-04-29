@@ -13,8 +13,8 @@ app.get('/*', function(req,res) {
 });
 
 // Start the app by listening on the default Heroku port
-const port = process.env.PORT || 2121;
-app.listen(port);
+const port = 2121;
+app.listen(process.env.PORT || 2121);
 const server = http.createServer(express);
 const webSocketServer = new WebSocket.Server( {server} )
 
