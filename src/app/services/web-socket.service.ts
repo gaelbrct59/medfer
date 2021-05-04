@@ -13,19 +13,9 @@ export class WebSocketService {
   constructor() { }
 
   public openWebSocket(){
-    // var HOST = location.origin.replace(/^http/, 'ws')
-    //this.webSocket = new WebSocket('ws://0.0.0.0:2121');
-    // this.webSocket = new WebSocket(HOST);
-    
-    var protocol;
-    console.log(location.origin.replace(/^http/, 'ws') +  ':2121');
-    if(window.location.protocol === 'https:') {
-        protocol = 'wss://';
-    } else {
-        protocol = 'ws://';
-    }
+  
 
-    this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws') +  ':2121');
+    this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws'));
 
 
     this.webSocket.onopen = (event) => {
