@@ -23,7 +23,9 @@ export class RepositoryComponent implements OnInit {
      .subscribe(params => {
        this.code = params['code'];
       })
+      console.log("test");
       this.webSocketService.openWebSocket();
+      console.log("test");
     }
     
     ngOnDestroy(): void {
