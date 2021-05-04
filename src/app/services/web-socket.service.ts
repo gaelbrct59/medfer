@@ -49,7 +49,6 @@ export class WebSocketService {
   }
 
   public sendImage(message: string | ArrayBuffer){
-    console.log("Send : " + message);
     this.image = message;
     this.webSocket.send(message);
   }
