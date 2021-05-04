@@ -18,7 +18,7 @@ export class WebSocketService {
     // this.webSocket = new WebSocket(HOST);
     
     var protocol;
-
+    console.log(location.origin);
     if(window.location.protocol === 'https:') {
         protocol = 'wss://';
     } else {
