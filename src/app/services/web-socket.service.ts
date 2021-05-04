@@ -44,7 +44,6 @@ export class WebSocketService {
   }
 
   public sendMessage(message: string){
-    console.log("Send : " + message);
     this.chatMessages.push(message);
     this.webSocket.send(message);
   }
