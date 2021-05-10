@@ -15,8 +15,7 @@ export class WebSocketService {
   public openWebSocket(){
   
     console.log("begin open web socket");
-    this.webSocket = new WebSocket('wss://medfercast-beta.herokuapp.com/repository?code=azerty');
-    // this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws'));
+    this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws'));
     
     console.log("websocket initialized with : " + location.origin.replace(/^http/, 'ws'));
     // this.webSocket.OPEN;
