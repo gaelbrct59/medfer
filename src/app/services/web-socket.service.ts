@@ -14,12 +14,16 @@ export class WebSocketService {
 
   public openWebSocket(){
   
-
+    console.log("begin open web socket");
     this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws') + ':2121');
+    console.log("websocket initialized with : " + location.origin.replace(/^http/, 'ws') + ':2121');
 
     this.webSocket.onopen = (event) => {
       console.log('Open: ', event);
     };
+
+    //console.log("opened ? " + this.webSocket.OPEN)
+    console.log("maybe opened lol");
 
     this.webSocket.onmessage = (event) => {
       console.log("Receive :" + event.data);
