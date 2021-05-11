@@ -1,4 +1,4 @@
-(function openWebSocket() {
+export function openWebSocket() {
     const sendBtn = document.querySelector('#send');
     const messages = document.querySelector('#messages');
     const messageBox = document.querySelector('#messageBox');
@@ -39,4 +39,4 @@
     }
 
     init();
-  })();
+  }

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WebSocketService } from '../services/web-socket.service';
+import { webSocketJs } from '../services/webSocketJs';
 
 @Component({
   selector: 'app-repository',
@@ -10,7 +11,7 @@ import { WebSocketService } from '../services/web-socket.service';
 export class RepositoryComponent implements OnInit {
   code: string;
   url: string | ArrayBuffer;
-  constructor(private route:ActivatedRoute, public webSocketService: WebSocketService) {
+  constructor(private route:ActivatedRoute, public webSocketJs: webSocketJs) {
     this.code = "";
     this.url = null;
    }
@@ -24,13 +25,13 @@ export class RepositoryComponent implements OnInit {
        this.code = params['code'];
       })
       console.log("test");
-      console.log(this.webSocketService);
-      this.webSocketService.openWebSocket();
+      // this.webSocketService.openWebSocket();
+      webSocketJs;
       console.log("test");
     }
     
     ngOnDestroy(): void {
-      this.webSocketService.closeWebSocket();
+      // this.webSocketService.closeWebSocket();
     }
 
     addMedia(): void{
@@ -41,7 +42,7 @@ export class RepositoryComponent implements OnInit {
     if(e.length >  0){
       var reader = new FileReader();
       reader.readAsDataURL(e[0]);
-      reader.onload = (event) => {this.webSocketService.sendImage(event.target.result);}
+      // reader.onload = (event) => {this.webSocketService.sendImage(event.target.result);}
     }
   }
 
