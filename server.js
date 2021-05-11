@@ -16,7 +16,7 @@ app.get('/*', function(req,res) {
 const port = 2121;
 app.listen(process.env.PORT || 8080);
 const server = http.createServer(app);
-const webSocketServer = new WebSocket.Server( {server:server} )
+const webSocketServer = new WebSocket.Server( {server } )
 
 webSocketServer.on('connection', function connection(webSocket) {
     webSocket.on('message', function messageIncoming(data){
