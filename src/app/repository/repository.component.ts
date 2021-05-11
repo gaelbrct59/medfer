@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { WebSocketService } from '../services/web-socket.service';
-import { webSocketJs } from '../services/webSocketJs';
+import { openWebSocket } from '../services/webSocketJs.js';
 
 @Component({
   selector: 'app-repository',
@@ -26,7 +26,7 @@ export class RepositoryComponent implements OnInit {
       })
       console.log("test");
       // this.webSocketService.openWebSocket();
-      webSocketJs;
+      openWebSocket();
       console.log("test");
     }
     
