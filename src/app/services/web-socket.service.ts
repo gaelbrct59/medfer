@@ -35,6 +35,11 @@ export class WebSocketService {
     this.webSocket.onclose = (event) => {
       console.log('Close: ', event);
     };
+
+    this.webSocket.onerror = error => {
+      console.log(`WebSocket error: ${error}`)
+    }
+    
   }
 
   public sendMessage(message: string){
