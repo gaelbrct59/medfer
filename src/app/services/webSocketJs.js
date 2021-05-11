@@ -17,7 +17,7 @@ export function openWebSocket() {
     //   ws.onclose = function() {
     //     ws = null;
     //   }
-    // }
+    }
 
     
     init();
