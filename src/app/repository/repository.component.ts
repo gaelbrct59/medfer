@@ -11,7 +11,7 @@ import { webSocketJs } from '../services/webSocketJs';
 export class RepositoryComponent implements OnInit {
   code: string;
   url: string | ArrayBuffer;
-  constructor(private route:ActivatedRoute, public webSocketJs: webSocketJs) {
+  constructor(private route:ActivatedRoute) {
     this.code = "";
     this.url = null;
    }
