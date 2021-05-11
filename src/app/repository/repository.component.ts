@@ -24,6 +24,7 @@ export class RepositoryComponent implements OnInit {
        this.code = params['code'];
       })
       console.log("test");
+      console.log(this.webSocketService);
       this.webSocketService.openWebSocket();
       console.log("test");
     }
