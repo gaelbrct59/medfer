@@ -15,7 +15,8 @@ export class WebSocketService {
   public openWebSocket(){
   
     console.log("begin open web socket");
-    this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws'));
+    // this.webSocket = new WebSocket(location.origin.replace(/^http/, 'ws'));
+    this.webSocket = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
     
     console.log("websocket initialized with : " + location.origin.replace(/^http/, 'ws'));
     // this.webSocket.OPEN;
