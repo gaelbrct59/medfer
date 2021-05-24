@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule, routingComponents } from './app-routing-module';
+import { SocketioService } from './services/socketio.service';
 
 @NgModule({
   declarations: [

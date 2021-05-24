@@ -3,7 +3,9 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  production: false
+  production: false,  
+	// SOCKET_ENDPOINT: 'http://localhost:2121'
+  SOCKET_ENDPOINT: location.origin.replace(/^http/, 'ws')
 };
 
 /*
