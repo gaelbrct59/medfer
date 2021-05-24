@@ -18,7 +18,6 @@ app.listen(process.env.PORT || 8080);
 // const server = http.createServer(app);
 const server = http.createServer();
 const webSocketServer = new WebSocket.Server( { server:server } )
-// const webSocketServer = new WebSocket(((window.location.protocol === "https:") ? "wss://" : "ws://") + window.location.host + "/ws");
 
 webSocketServer.on('connection', function connection(webSocket) {
     webSocket.on('message', function messageIncoming(data){
