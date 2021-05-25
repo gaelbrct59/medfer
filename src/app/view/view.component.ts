@@ -9,16 +9,20 @@ import { Router, RouterLink } from '@angular/router';
 export class ViewComponent implements OnInit {
   
   code: string;
+  nameuser: string;
   constructor(private route:Router) { 
-    this.code = ""
+    this.code = "";
   }
 
   ngOnInit(): void {
   }
 
   getCode(){
-    if(this.code.length > 0){
+    
+    if(this.code.length > 0 /*&& this.nameuser.length > 0*/){
       this.route.navigate(['/repository'], {queryParams: {code: this.code}});
+    }else{
+      alert("Remplir");
     }
   }
 

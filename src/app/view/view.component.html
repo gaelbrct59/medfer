@@ -8,13 +8,13 @@
 </head>
 <body>
     <div id="presentation">
+        <!-- <p class="lead">    Enter your pseudo : </p> -->
+        <!-- <input [value]="nameuser" (input)="nameuser = $event.target.value"> -->
         <p class="lead">    Connect this device with another </p>
     
         <div class="lead"> Enter a code to connect : </div>
     </div>
-    <div id="user-text">
-        <input [value]="code" (input)="code = $event.target.value" id="user-code">
-    </div>
+    <input [value]="code" (input)="code = $event.target.value" id="user-code">
     <div id="buttons">
         <button id="enter-code" class="btn btn-primary" (click)="getCode()"> Send code </button>
         <button id="generate-code" class="btn btn-primary"> 

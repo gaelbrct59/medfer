@@ -10,10 +10,11 @@ export class SocketioService {
   image: string;
   constructor() { }
 
-  setupSocketConnection() {
+  setupSocketConnection(code: String) {
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
     
     this.socket = io(environment.SOCKET_ENDPOINT);
+    this.socket.emit('code', code);
     this.socket.on('receiveImage', (data: string) => {
       console.log("Image reçu");
       this.image=data;

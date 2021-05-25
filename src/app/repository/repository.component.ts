@@ -24,7 +24,7 @@ export class RepositoryComponent implements OnInit {
      .subscribe(params => {
        this.code = params['code'];
       })
-      this.socketService.setupSocketConnection();
+      this.socketService.setupSocketConnection(this.code);
     }
     
     ngOnDestroy(): void {

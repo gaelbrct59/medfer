@@ -2,7 +2,7 @@
     text-indent: 10%;
 }
 
-#user-text, #buttons{
+input, #buttons{
     display: flex;
     justify-content: center;
 }
