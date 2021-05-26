@@ -4,8 +4,8 @@
 
 export const environment = {
   production: false,  
-	SOCKET_ENDPOINT: 'http://localhost:2121'
-  // SOCKET_ENDPOINT: location.origin.replace(/^http/, 'ws')
+	// SOCKET_ENDPOINT: 'http://localhost:2121'
+  SOCKET_ENDPOINT: location.origin.replace(/^http/, 'ws')
 };
 
 /*
