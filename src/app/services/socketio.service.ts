@@ -21,6 +21,7 @@ export class SocketioService {
     });
   }
   closeSocketConnection() {
+    this.image = "";
     this.socket.close();
   }
 
