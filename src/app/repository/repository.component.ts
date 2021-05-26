@@ -28,7 +28,7 @@ export class RepositoryComponent implements OnInit {
     }
     
     ngOnDestroy(): void {
-      //this.webSocketService.closeWebSocket();
+      this.socketService.closeSocketConnection();
     }
 
     addMedia(): void{
