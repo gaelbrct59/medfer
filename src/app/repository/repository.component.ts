@@ -11,7 +11,6 @@ export class RepositoryComponent implements OnInit {
   code: string;
   url: string | ArrayBuffer;
   canvas: HTMLCanvasElement;
-  test: HTMLElement;
   constructor(private route:ActivatedRoute,  public socketService: SocketioService) {
     this.code = "";
     this.url = null;
@@ -26,15 +25,13 @@ export class RepositoryComponent implements OnInit {
       })
       this.socketService.setupSocketConnection(this.code);
     }
-    
+
     ngOnDestroy(): void {
       console.log("destroyed");
       this.socketService.closeSocketConnection();
     }
-
-    addMedia(): void{
-      // console.log(this.canvas);
       
+    addMedia(): void{
       document.getElementById('attachment').click();
     }
 
@@ -46,8 +43,6 @@ export class RepositoryComponent implements OnInit {
     }
   }
 
-  getCode(){
-    return this.code;
-  }
+  
 
 }
