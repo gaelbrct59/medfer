@@ -23,42 +23,45 @@ export class SocketioService {
 
   setupSocketConnection(code: String) {
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
-    
+
     this.socket = io(environment.SOCKET_ENDPOINT);
     this.socket.emit('code', code);
     this.socket.on('receiveImage', (data: string) => {
       console.log("Image reçu");
       // this.image=data;
       // console.log(this.canvas);
-      if(this.canvas == null){
+      if (this.canvas == null) {
         this.initCanvas();
       }
 
-      this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
       this.img = new Image();
-      // this.img.src = data;
-      this.img.src = 'https://www.zupimages.net/up/21/21/1ejn.jpg';
+      this.img.src = data;
+      // this.img.src = 'https://www.zupimages.net/up/21/21/1ejn.jpg';
+      this.img.onload = () => {
+        console.log(this.canvas.width, this.canvas.height);
+        this.context.drawImage(this.img, 0, 0, this.img.width, this.img.height,     // source rectangle
+          0, 0, this.canvas.width, this.canvas.height); // destination rectangle
+      };
 
-      this.context.drawImage(this.img, 0,  0, this.img.width,    this.img.height,     // source rectangle
-        0, 0, this.canvas.width, this.canvas.height); // destination rectangle
       // this.canvas.style.background='url(' + data + ') no-repeat center center';
     });
   }
 
-  initCanvas(): void{
+  initCanvas(): void {
     console.log("salzut");
-    
+
     this.canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
     this.context = this.canvas.getContext("2d");
 
 
-    
+
     // img.src =
 
-    this.canvas.addEventListener("dblclick", (e) => {this.zoom(e);});
+    this.canvas.addEventListener("dblclick", (e) => { this.zoom(e); });
   }
 
-  zoom(event): void{
+  zoom(event): void {
     var zoom = 2;
     this.mousex = event.clientX - this.canvas.offsetLeft;
     this.mousey = event.clientY - this.canvas.offsetTop;
@@ -86,10 +89,10 @@ export class SocketioService {
     this.socket.close();
   }
 
-  sendImage(message: string | ArrayBuffer){
-    
+  sendImage(message: string | ArrayBuffer) {
+
     console.log("Send : Image");
     this.socket.emit('image', message);
   }
-  
+
 }
