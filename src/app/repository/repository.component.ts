@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { SocketioService } from '../services/socketio.service';
 
-
 @Component({
   selector: 'app-repository',
   templateUrl: './repository.component.html',
@@ -11,14 +10,15 @@ import { SocketioService } from '../services/socketio.service';
 export class RepositoryComponent implements OnInit {
   code: string;
   url: string | ArrayBuffer;
+  canvas: HTMLCanvasElement;
+  test: HTMLElement;
   constructor(private route:ActivatedRoute,  public socketService: SocketioService) {
     this.code = "";
     this.url = null;
    }
 
-
-   
    ngOnInit(): void {
+     
      this.route
      .queryParams
      .subscribe(params => {
@@ -28,10 +28,13 @@ export class RepositoryComponent implements OnInit {
     }
     
     ngOnDestroy(): void {
+      console.log("destroyed");
       this.socketService.closeSocketConnection();
     }
 
     addMedia(): void{
+      // console.log(this.canvas);
+      
       document.getElementById('attachment').click();
     }
 
@@ -41,6 +44,10 @@ export class RepositoryComponent implements OnInit {
       reader.readAsDataURL(e[0]);
       reader.onload = (event) => {this.socketService.sendImage(event.target.result);}
     }
+  }
+
+  getCode(){
+    return this.code;
   }
 
 }
