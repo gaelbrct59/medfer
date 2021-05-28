@@ -56,6 +56,10 @@ io.on('connection', (socket, test) => {
         io.to(getNameOfRoomBySocketid(socket)).emit('receiveImage', `${msg}`)
         // io.emit('receiveImage', `${msg}`);
     });
+
+    socket.on('change', (e) => {
+        io.to(getNameOfRoomBySocketid(socket)).emit('newPos', e);
+    })
 });
   
 server.listen(port, () => {

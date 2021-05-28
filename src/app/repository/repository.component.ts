@@ -10,10 +10,12 @@ import { SocketioService } from '../services/socketio.service';
 export class RepositoryComponent implements OnInit {
   code: string;
   url: string | ArrayBuffer;
+  contenu_topbar: HTMLElement;
   canvas: HTMLCanvasElement;
   constructor(private route:ActivatedRoute,  public socketService: SocketioService) {
     this.code = "";
     this.url = null;
+    this.contenu_topbar = document.getElementById("actual-code") as HTMLElement;
    }
 
    ngOnInit(): void {
@@ -23,12 +25,16 @@ export class RepositoryComponent implements OnInit {
      .subscribe(params => {
        this.code = params['code'];
       })
+      // this.contenu_codebar = document.getElementById("actual-code");
+      this.contenu_topbar.innerText = this.code;
+      
       this.socketService.setupSocketConnection(this.code);
     }
 
     ngOnDestroy(): void {
       console.log("destroyed");
       this.socketService.closeSocketConnection();
+      this.contenu_topbar.innerText = "";
     }
       
     addMedia(): void{

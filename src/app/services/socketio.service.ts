@@ -17,8 +17,14 @@ export class SocketioService {
 
   setupSocketConnection(code: String) {
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
-    
     this.socket = io(environment.SOCKET_ENDPOINT);
+    
+    
+    
+    this.socket.on('newPos', (e) => {
+      console.log(e);
+      this.setTransformP(e.pointx, e.pointy, e.scale);
+    });
     this.socket.emit('code', code);
     this.socket.on('receiveImage', (data: string) => {
       console.log("Image reçue");
@@ -41,7 +47,7 @@ export class SocketioService {
       this.zoom.addEventListener("pointerup", () => {
         this.panning = false;
         console.log("mouseup");
-        
+        this.sendChange();
       });
 
       this.zoom.addEventListener("pointermove", (e: MouseEvent) => {
@@ -74,6 +80,20 @@ export class SocketioService {
     this.scale + ")";
   }
 
+  setTransformP(pointx, pointy, scale): void{
+    this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
+    scale + ")";
+  }
+
+  sendChange(): void {
+    console.log(this.scale);
+    
+    this.socket.emit('change', {  scale: this.scale, 
+      pointx: this.pointX, 
+      pointy: this.pointY,
+      start: this.start });
+  }
+
 
   closeSocketConnection() {
     this.image = "";
@@ -81,7 +101,6 @@ export class SocketioService {
   }
 
   sendImage(message: string | ArrayBuffer){
-    
     console.log("Send : Image");
     this.socket.emit('image', message);
   }
