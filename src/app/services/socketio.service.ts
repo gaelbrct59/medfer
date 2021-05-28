@@ -81,6 +81,9 @@ export class SocketioService {
   }
 
   setTransformP(pointx, pointy, scale): void{
+    this.pointX = pointx;
+    this.pointY = pointy;
+    this.scale = scale;
     this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
     scale + ")";
   }
