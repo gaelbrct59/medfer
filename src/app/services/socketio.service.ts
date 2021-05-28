@@ -8,17 +8,11 @@ import { environment } from 'src/environments/environment';
 export class SocketioService {
   socket;
   image: string;
-  canvas: HTMLCanvasElement;
-  context: any;
-  img: any;
-  scale: number; currentzoom: number; originx: number; originy: number; mousex: number; mousey: number;
+  img: HTMLImageElement;
+  scale: number; panning: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement;
+  
   constructor() {
-    this.scale = 1;
-    this.currentzoom = 1;
-    this.originx = 0;
-    this.originy = 0;
-    this.mousex = 0;
-    this.mousey = 0;
+    
   }
 
   setupSocketConnection(code: String) {
@@ -27,62 +21,62 @@ export class SocketioService {
     this.socket = io(environment.SOCKET_ENDPOINT);
     this.socket.emit('code', code);
     this.socket.on('receiveImage', (data: string) => {
-      console.log("Image reçu");
-      // this.image=data;
-      // console.log(this.canvas);
-      if(this.canvas == null){
-        this.initCanvas();
-      }
+      console.log("Image reçue");
+      this.scale = 1;
+      this.panning = false;
+      this.pointX = 0;
+      this.pointY = 0;
+      this.start = { x: 0, y: 0 };
+      this.image=data;
+      this.zoom = document.getElementById("zoom") as HTMLElement;
+      this.setTransform();
+      
+      this.zoom.addEventListener("pointerdown", (e: MouseEvent) => {
+        e.preventDefault();
+        this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
+        this.panning = true;
+        console.log("mousedown");
+      });
 
-      this.context.clearRect(0,0,this.canvas.width,this.canvas.height);
-      this.img = new Image();
-      // this.img.src = data;
-      this.img.src = 'https://www.zupimages.net/up/21/21/1ejn.jpg';
+      this.zoom.addEventListener("pointerup", () => {
+        this.panning = false;
+        console.log("mouseup");
+        
+      });
 
-      this.context.drawImage(this.img, 0,  0, this.img.width,    this.img.height,     // source rectangle
-        0, 0, this.canvas.width, this.canvas.height); // destination rectangle
-      // this.canvas.style.background='url(' + data + ') no-repeat center center';
+      this.zoom.addEventListener("pointermove", (e: MouseEvent) => {
+        e.preventDefault();
+        if (!this.panning) {
+          return;
+        }
+        this.pointX = (e.clientX - this.start.x);
+        this.pointY = (e.clientY - this.start.y);
+        this.setTransform();
+      });
+
+      this.zoom.addEventListener("mousewheel", (e: WheelEvent) => {
+        e.preventDefault();
+        var xs = (e.clientX - this.pointX) / this.scale,
+        ys = (e.clientY - this.pointY) / this.scale,
+        delta = -e.deltaY;
+        (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
+        this.pointX = e.clientX - xs * this.scale;
+        this.pointY = e.clientY - ys * this.scale;
+        
+        this.setTransform();
+      })
+      
     });
   }
 
-  initCanvas(): void{
-    console.log("salzut");
-    
-    this.canvas = document.getElementsByTagName("canvas")[0] as HTMLCanvasElement;
-    this.context = this.canvas.getContext("2d");
-
-
-    
-    // img.src =
-
-    this.canvas.addEventListener("dblclick", (e) => {this.zoom(e);});
+  setTransform(): void{
+    this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
+    this.scale + ")";
   }
 
-  zoom(event): void{
-    var zoom = 2;
-    this.mousex = event.clientX - this.canvas.offsetLeft;
-    this.mousey = event.clientY - this.canvas.offsetTop;
-    zoom = 2;
-    if (this.currentzoom == 32)
-      return;
-    this.currentzoom *= zoom;
-    this.context.translate(
-      this.originx,
-      this.originy
-    );
-    this.context.scale(zoom, zoom);
-    this.context.translate(
-      -(this.mousex / this.scale + this.originx - this.mousex / (this.scale * zoom)),
-      -(this.mousey / this.scale + this.originy - this.mousey / (this.scale * zoom))
-    );
-    this.originx = (this.mousex / this.scale + this.originx - this.mousex / (this.scale * zoom));
-    this.originy = (this.mousey / this.scale + this.originy - this.mousey / (this.scale * zoom));
-    this.scale *= zoom;
-  }
 
   closeSocketConnection() {
     this.image = "";
-    this.canvas = null;
     this.socket.close();
   }
 
