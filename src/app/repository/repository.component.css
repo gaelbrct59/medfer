@@ -12,17 +12,18 @@
 .zoom-outer{
     border: solid 1px;
     overflow: hidden;
-    
+
 }
 
 #zoom {
     transform-origin: 0px 0px;
     transform: scale(1) translate(0px, 0px);
     cursor: grab;
-  }
-div#zoom > img {
     width: 100%;
     height: 85vh;
-    object-fit: scale-down;
+  }
+div#zoom > img {
+
+    object-fit: contain;
 }
 
