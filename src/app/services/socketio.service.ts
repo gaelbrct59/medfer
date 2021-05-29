@@ -126,8 +126,10 @@ export class SocketioService {
   putImage(percentX, percentY) : any {
     console.log("size ", percentX, percentY);
     var img = document.getElementById("container-media") as HTMLElement;
-    img.style.maxWidth = percentX *  100 + "vw";
-    img.style.maxHeight = percentY *  100 + "vh";
+
+    img.style.width = percentX *  100 + "%";
+    // img.style.maxHeight = percentY *  100 + "%";
+    // img.style.maxHeight = percentY *  100 + "%";
   }
 
   closeSocketConnection() {
@@ -143,10 +145,18 @@ export class SocketioService {
     img.src = message as string;
 
     img.onload = () => {
-
+      if(img.width > this.zoomOuter.offsetWidth ||  img.height > this.zoomOuter.offsetHeight){
+        
+        this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?.5:img.width/ this.zoomOuter.offsetWidth,
+                              height: img.height > this.zoomOuter.offsetHeight?.5:img.height/ this.zoomOuter.offsetHeight,
+                              base64: message });
+      }else{
         this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
                               height: img.height / this.zoomOuter.offsetHeight,
                               base64: message });
+
+      }
+
     }
   }
   

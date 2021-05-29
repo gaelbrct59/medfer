@@ -21,6 +21,7 @@
     cursor: grab;
     width: 100%;
     height: 85vh;
+    /* height: 85vh; */
   }
 div#zoom > img {
 
