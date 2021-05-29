@@ -47,10 +47,17 @@ export class SocketioService {
         this.panning = true;
         console.log("mousedown");
       });
-      // this.zoom.addEventListener("touchmove", () => {
-      //   this.zoom.dispatchEvent(new Event("mousewheel"));
-      // });
+      this.zoom.addEventListener("touchmove", () => {
+        this.zoom.dispatchEvent(new Event("pointermove"));
+      });
 
+      this.zoom.addEventListener("touchstart", () => {
+        this.zoom.dispatchEvent(new Event("pointerdown"));
+      });
+
+      this.zoom.addEventListener("touchend", () => {
+        this.zoom.dispatchEvent(new Event("pointerup"));
+      });
 
       this.zoom.addEventListener("pointerup", () => {
         this.panning = false;
