@@ -123,11 +123,11 @@ export class SocketioService {
   }
 
   sendChange(): void {
-    console.log(this.scale);
+    // console.log(this.scale);
     
-    console.log(this.pointX, this.pointY);
+    // console.log(this.pointX, this.pointY);
     var p = this.convertPointintoPercent(this.pointX, this.pointY);
-    console.log(p);
+    // console.log(p);
     this.socket.emit('change', {  scale: this.scale, 
       percentx: p.x, 
       percenty: p.y,
@@ -171,17 +171,17 @@ export class SocketioService {
     img.src = message as string;
 
     img.onload = () => {
-      if(img.width > this.zoomOuter.offsetWidth ||  img.height > this.zoomOuter.offsetHeight){
+      // if(img.width > this.zoomOuter.offsetWidth ||  img.height > this.zoomOuter.offsetHeight){
         
-        this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?1:img.width/ this.zoomOuter.offsetWidth,
-                              height: img.height > this.zoomOuter.offsetHeight?1:img.height/ this.zoomOuter.offsetHeight,
-                              base64: message });
-      }else{
+      //   this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?1:img.width/ this.zoomOuter.offsetWidth,
+      //                         height: img.height > this.zoomOuter.offsetHeight?1:img.height/ this.zoomOuter.offsetHeight,
+      //                         base64: message });
+      // }else{
         this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
                               height: img.height / this.zoomOuter.offsetHeight,
                               base64: message });
 
-      }
+      // }
 
     }
   }

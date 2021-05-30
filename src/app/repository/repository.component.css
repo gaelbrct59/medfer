@@ -24,7 +24,8 @@
     /* height: 85vh; */
   }
 div#zoom > img {
-
+    max-width: 95vw;
+    max-height: 85vh;
     object-fit: contain;
 }
 
