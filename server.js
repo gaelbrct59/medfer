@@ -16,12 +16,12 @@ const codeRoom = [];
 const port =  process.env.PORT || 2121;
 
 const server = http.createServer(app);
-// const io = socketIO(server);
-const io = socketIO(server, {
-    cors: {
-      origins: ['http://localhost:4200/']
-    }
-  });
+const io = socketIO(server);
+// const io = socketIO(server, {
+//     cors: {
+//       origins: ['http://localhost:4200/']
+//     }
+//   });
 
 app.set('io', io);
 

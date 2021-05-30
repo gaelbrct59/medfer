@@ -42,52 +42,71 @@ export class SocketioService {
       this.setTransform();
       
       this.zoom.addEventListener("pointerdown", (e: MouseEvent) => {
-        e.preventDefault();
-        this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
-        this.panning = true;
-        console.log("mousedown");
+        this.takeImage(e);
       });
-      this.zoom.addEventListener("touchmove", () => {
-        this.zoom.dispatchEvent(new Event("pointermove"));
+      this.zoom.addEventListener("touchmove", (e) => {
+        // this.zoom.dispatchEvent(new Event("pointermove"));
+        this.moveImage(e);
       });
 
-      this.zoom.addEventListener("touchstart", () => {
-        this.zoom.dispatchEvent(new Event("pointerdown"));
+      this.zoom.addEventListener("touchstart", (e) => {
+        // this.zoom.dispatchEvent(new Event("pointerdown"));
+        this.takeImage(e);
       });
 
       this.zoom.addEventListener("touchend", () => {
-        this.zoom.dispatchEvent(new Event("pointerup"));
+        // this.zoom.dispatchEvent(new Event("pointerup"));
+        this.dropImage();
       });
 
       this.zoom.addEventListener("pointerup", () => {
-        this.panning = false;
-        console.log("mouseup");
-        this.sendChange();
+        this.dropImage();
       });
 
       this.zoom.addEventListener("pointermove", (e: MouseEvent) => {
-        e.preventDefault();
-        if (!this.panning) {
-          return;
-        }
-        this.pointX = (e.clientX - this.start.x);
-        this.pointY = (e.clientY - this.start.y);
-        this.setTransform();
+        this.moveImage(e);
       });
 
       this.zoom.addEventListener("mousewheel", (e: WheelEvent) => {
-        e.preventDefault();
-        var xs = (e.clientX - this.pointX) / this.scale,
-        ys = (e.clientY - this.pointY) / this.scale,
-        delta = -e.deltaY;
-        (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
-        this.pointX = e.clientX - xs * this.scale;
-        this.pointY = e.clientY - ys * this.scale;
-        
-        this.setTransform();
+        this.zoomImage(e);
       })
       
     });
+  }
+
+  takeImage(e){
+    e.preventDefault();
+    this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
+    this.panning = true;
+    console.log("mousedown");
+  }
+
+  moveImage(e){
+    e.preventDefault();
+    if (!this.panning) {
+      return;
+    }
+    this.pointX = (e.clientX - this.start.x);
+    this.pointY = (e.clientY - this.start.y);
+    this.setTransform();
+  }
+
+  dropImage(){
+    this.panning = false;
+    console.log("mouseup");
+    this.sendChange();
+  }
+
+  zoomImage(e: WheelEvent){
+    e.preventDefault();
+    var xs = (e.clientX - this.pointX) / this.scale,
+    ys = (e.clientY - this.pointY) / this.scale,
+    delta = -e.deltaY;
+    (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
+    this.pointX = e.clientX - xs * this.scale;
+    this.pointY = e.clientY - ys * this.scale;
+    
+    this.setTransform();
   }
 
   setTransform(): void{
@@ -154,8 +173,8 @@ export class SocketioService {
     img.onload = () => {
       if(img.width > this.zoomOuter.offsetWidth ||  img.height > this.zoomOuter.offsetHeight){
         
-        this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?.5:img.width/ this.zoomOuter.offsetWidth,
-                              height: img.height > this.zoomOuter.offsetHeight?.5:img.height/ this.zoomOuter.offsetHeight,
+        this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?1:img.width/ this.zoomOuter.offsetWidth,
+                              height: img.height > this.zoomOuter.offsetHeight?1:img.height/ this.zoomOuter.offsetHeight,
                               base64: message });
       }else{
         this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
