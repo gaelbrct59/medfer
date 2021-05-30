@@ -76,7 +76,11 @@ export class SocketioService {
 
   takeImage(e){
     e.preventDefault();
-    this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
+    if (e instanceof TouchEvent){
+      this.start = { x: e.touches[0].clientX - this.pointX, y: e.touches[0].clientY - this.pointY };
+    }else{
+      this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
+    }
     this.panning = true;
     console.log("mousedown");
   }
@@ -86,8 +90,13 @@ export class SocketioService {
     if (!this.panning) {
       return;
     }
-    this.pointX = (e.clientX - this.start.x);
-    this.pointY = (e.clientY - this.start.y);
+    if (e instanceof TouchEvent){
+      this.pointX = (e.touches[0].clientX - this.start.x);
+      this.pointY = (e.touches[0].clientY - this.start.y);
+    }else{
+      this.pointX = (e.clientX - this.start.x);
+      this.pointY = (e.clientY - this.start.y);      
+    }
     this.setTransform();
   }
 
@@ -150,7 +159,7 @@ export class SocketioService {
   }
 
   putImage(percentX, percentY) : any {
-    console.log("size ", percentX, percentY);
+    // console.log("size ", percentX, percentY);
     var img = document.getElementById("container-media") as HTMLElement;
 
     img.style.width = percentX *  100 + "%";
