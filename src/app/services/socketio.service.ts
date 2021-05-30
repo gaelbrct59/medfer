@@ -28,6 +28,7 @@ export class SocketioService {
     });
     
     this.socket.on('receiveImage', (data) => {
+      this.distance1 = 0;
       console.log("Image reçue");
       this.scale = 1;
       this.panning = false;
@@ -43,22 +44,14 @@ export class SocketioService {
       
       
       this.zoom.addEventListener("touchmove", (e) => {
-        // this.zoom.dispatchEvent(new Event("pointermove"));
         this.moveImage(e);
       });
       
       this.zoom.addEventListener("touchstart", (e) => {
-        // this.zoom.dispatchEvent(new Event("pointerdown"));
         this.takeImage(e);
       });
 
-      // this.zoom.addEventListener("gestureend", (e: any) => {
-      //   console.log("gesture");
-      //   this.zoomImage(e);
-      // });
-      
       this.zoom.addEventListener("touchend", () => {
-        // this.zoom.dispatchEvent(new Event("pointerup"));
         this.dropImage();
       });
       
@@ -101,20 +94,17 @@ export class SocketioService {
 
   moveImage(e){
     e.preventDefault();
+    console.log(e instanceof TouchEvent);
+    console.log(e);
+    
     if(e instanceof TouchEvent && e.touches.length >= 2) {
         var dist = Math.hypot(
           e.touches[0].pageX - e.touches[1].pageX,
           e.touches[0].pageY - e.touches[1].pageY);
-          // this.pointX = (e.touches[0].clientX + e.touches[1].clientX)/2;
-          // this.pointY = (e.touches[0].clientY + e.touches[1].clientY)/2;
-          // console.log(this.scale, this.pointX, this.pointY);
-        //   var xs = ((e.touches[0].clientX + e.touches[1].clientX) - this.pointX) / this.scale,
-        //   ys = ((e.touches[0].clientY + e.touches[1].clientY) - this.pointY) / this.scale;
-        // this.scale = dist / 100;
+
+        console.log(e.touches.length);
         
-        // this.pointX = (e.touches[0].clientX + e.touches[1].clientX) - xs * this.scale;
-        // this.pointY = (e.touches[0].clientY + e.touches[1].clientY) - ys * this.scale;
-        var xsssss = Math.min(e.touches[0].clientX, e.touches[1].clientX) +
+          var xsssss = Math.min(e.touches[0].clientX, e.touches[1].clientX) +
         (e.touches[0].clientX + e.touches[1].clientX)/2;
         
         var ysssss = Math.min(e.touches[0].clientY, e.touches[1].clientY) +
@@ -123,12 +113,15 @@ export class SocketioService {
         var xs = (xsssss - this.pointX)/this.scale;
         var ys = (ysssss - this.pointY)/this.scale;
         // this.scale = dist / 100;
-        var delta = this.distance1 - dist;
-        (delta > 0) ? (this.scale /= 1.01) : (this.scale *= 1.01);
+        var delta = dist - this.distance1;
+        console.log(delta, this.distance1, dist);
+        
+        (delta > 0) ? (this.scale *= 1.01) : (this.scale /= 1.01);
         if(delta = 0)
           return;
-        this.pointX = xsssss - xs * -this.scale;
-        this.pointY = ysssss - ys * -this.scale;
+        var tmp = this.scale
+        this.pointX = xsssss - xs * tmp;
+        this.pointY = ysssss - ys * tmp;
         this.distance1 = dist;
         this.setTransform();
     }
@@ -143,8 +136,6 @@ export class SocketioService {
         this.pointX = (e.touches[0].clientX - this.start.x);
         this.pointY = (e.touches[0].clientY - this.start.y);
         this.setTransform();
-      }else{ //User tuch image with two fingers and change size of image
-        
       }
     }else{
       this.pointX = (e.clientX - this.start.x);
@@ -171,7 +162,6 @@ export class SocketioService {
     }else{
       var xs = (e.clientX - this.pointX) / this.scale,
       ys = (e.clientY - this.pointY) / this.scale;
-      console.log(e.scale);
       (e.scale > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
     }
     this.pointX = e.clientX - xs * this.scale;
