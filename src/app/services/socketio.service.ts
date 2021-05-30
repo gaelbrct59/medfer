@@ -125,10 +125,11 @@ export class SocketioService {
         // this.scale = dist / 100;
         var delta = this.distance1 - dist;
         (delta > 0) ? (this.scale /= 1.01) : (this.scale *= 1.01);
-        
+        if(delta = 0)
+          return;
         this.pointX = xsssss - xs * -this.scale;
         this.pointY = ysssss - ys * -this.scale;
-
+        this.distance1 = dist;
         this.setTransform();
     }
 
