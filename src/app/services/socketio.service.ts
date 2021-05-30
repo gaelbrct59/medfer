@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
+import { DeviceDetectorService } from "ngx-device-detector";
 
 @Injectable({
   providedIn: 'root'
@@ -8,41 +9,20 @@ import { environment } from 'src/environments/environment';
 export class SocketioService {
   socket;
   image: string;
-  img: HTMLImageElement;
-  scale: number; panning: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
+  scale: number; taken: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
   zoomOuter:HTMLElement;
-  distance1: number;
-  constructor() {
+  private distance1: number;
+  constructor(private deviceService: DeviceDetectorService) {
+     
   }
 
   setupSocketConnection(code: String) {
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
     this.socket = io(environment.SOCKET_ENDPOINT);
     this.socket.emit('code', code);
+    this.zoom = document.getElementById("zoom") as HTMLElement;
     
-    
-    this.socket.on('newPos', (e) => {
-      // console.log(e);
-      var p = this.convertPercentintoPoint(e.percentx, e.percenty);
-      this.setTransformP(p.x, p.y, e.scale);
-    });
-    
-    this.socket.on('receiveImage', (data) => {
-      this.distance1 = 0;
-      console.log("Image reçue");
-      this.scale = 1;
-      this.panning = false;
-      this.pointX = 0;
-      this.pointY = 0;
-      this.start = { x: 0, y: 0 };
-      this.image=data.base64;
-      
-      this.zoom = document.getElementById("zoom") as HTMLElement;
-      this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
-      this.putImage(data.width, data.height);
-      this.setTransform();
-      
-      
+    if (this.deviceService.isMobile() || this.deviceService.isTablet()){
       this.zoom.addEventListener("touchmove", (e) => {
         this.moveImage(e);
       });
@@ -54,7 +34,7 @@ export class SocketioService {
       this.zoom.addEventListener("touchend", () => {
         this.dropImage();
       });
-      
+    }else{
       this.zoom.addEventListener("pointerdown", (e: MouseEvent) => {
         this.takeImage(e);
       });
@@ -69,23 +49,47 @@ export class SocketioService {
       this.zoom.addEventListener("mousewheel", (e: WheelEvent) => {
         this.zoomImage(e);
       })
+    }
+
+
+    this.socket.on('newPos', (e) => {
+      var p = this.convertPercentintoPoint(e.percentx, e.percenty);
+      this.setTransformP(p.x, p.y, e.scale);
+    });
+    
+    this.socket.on('receiveImage', (data) => {
+      this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
+
+      this.image = "";
+      console.log("Image reçue");
+      this.scale = 1;
+      this.taken = false;
+      this.pointX = 0;
+      this.pointY = 0;
+      this.start = { x: 0, y: 0 };
       
+      this.image=data.base64;
+      this.putImage(data.width, data.height);
+      this.setTransform();
+     
     });
   }
 
   takeImage(e){
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+    }
     if (e instanceof TouchEvent){
       if (e.touches.length > 1){
-        this.panning = false;
+        this.taken = false;
         this.distance1 = Math.hypot(e.touches[0].pageX - e.touches[1].pageX,
           e.touches[0].pageY - e.touches[1].pageY);
       }else{
         this.start = { x: e.touches[0].clientX - this.pointX, y: e.touches[0].clientY - this.pointY };
-        this.panning = true;
+        this.taken = true;
       }
     }else{
-      this.panning = true;
+      this.taken = true;
       this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
     }
     
@@ -93,17 +97,15 @@ export class SocketioService {
   }
 
   moveImage(e){
-    e.preventDefault();
-    console.log(e instanceof TouchEvent);
-    console.log(e);
+    if (e.cancelable) {
+      e.preventDefault();
+   }
     
     if(e instanceof TouchEvent && e.touches.length >= 2) {
         var dist = Math.hypot(
           e.touches[0].pageX - e.touches[1].pageX,
           e.touches[0].pageY - e.touches[1].pageY);
 
-        console.log(e.touches.length);
-        
           var xsssss = Math.min(e.touches[0].clientX, e.touches[1].clientX) +
         (e.touches[0].clientX + e.touches[1].clientX)/2;
         
@@ -114,25 +116,25 @@ export class SocketioService {
         var ys = (ysssss - this.pointY)/this.scale;
         // this.scale = dist / 100;
         var delta = dist - this.distance1;
-        console.log(delta, this.distance1, dist);
+        // console.log(delta, this.distance1, dist);
+        console.log(delta);
         
-        (delta > 0) ? (this.scale *= 1.01) : (this.scale /= 1.01);
+        (delta > 0) ? (this.scale *= 1.007) : (this.scale /= 1.007);
+        this.distance1 = dist;
         if(delta = 0)
           return;
         var tmp = this.scale
         this.pointX = xsssss - xs * tmp;
         this.pointY = ysssss - ys * tmp;
-        this.distance1 = dist;
         this.setTransform();
     }
 
-    if (!this.panning) {
+    if (!this.taken) {
       return;
     }
     
     if (e instanceof TouchEvent){
       if(e.touches.length < 2){
-        console.log("move");
         this.pointX = (e.touches[0].clientX - this.start.x);
         this.pointY = (e.touches[0].clientY - this.start.y);
         this.setTransform();
@@ -145,25 +147,21 @@ export class SocketioService {
   }
 
   dropImage(){
-    this.panning = false;
+    this.taken = false;
     console.log("mouseup");
     this.sendChange();
   }
 
   zoomImage(e){
     
-    e.preventDefault();
+    if (e.cancelable) {
+      e.preventDefault();
+   }
     clearInterval(this.timer);
-    if(e instanceof WheelEvent){
-      var xs = (e.clientX - this.pointX) / this.scale,
-      ys = (e.clientY - this.pointY) / this.scale,
-      delta = -e.deltaY;
-      (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
-    }else{
-      var xs = (e.clientX - this.pointX) / this.scale,
-      ys = (e.clientY - this.pointY) / this.scale;
-      (e.scale > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
-    }
+    var xs = (e.clientX - this.pointX) / this.scale,
+    ys = (e.clientY - this.pointY) / this.scale,
+    delta = -e.deltaY;
+    (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
     this.pointX = e.clientX - xs * this.scale;
     this.pointY = e.clientY - ys * this.scale;
     
@@ -189,11 +187,7 @@ export class SocketioService {
   }
 
   sendChange(): void {
-    // console.log(this.scale);
-    
-    // console.log(this.pointX, this.pointY);
     var p = this.convertPointintoPercent(this.pointX, this.pointY);
-    // console.log(p);
     this.socket.emit('change', {  scale: this.scale, 
       percentx: p.x, 
       percenty: p.y,
@@ -216,7 +210,6 @@ export class SocketioService {
   }
 
   putImage(percentX, percentY) : any {
-    // console.log("size ", percentX, percentY);
     var img = document.getElementById("container-media") as HTMLElement;
 
     img.style.width = percentX *  100 + "%";
