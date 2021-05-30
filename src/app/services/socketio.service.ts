@@ -11,6 +11,7 @@ export class SocketioService {
   img: HTMLImageElement;
   scale: number; panning: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
   zoomOuter:HTMLElement;
+  distance1: number;
   constructor() {
   }
 
@@ -84,7 +85,8 @@ export class SocketioService {
     if (e instanceof TouchEvent){
       if (e.touches.length > 1){
         this.panning = false;
-      
+        this.distance1 = Math.hypot(e.touches[0].pageX - e.touches[1].pageX,
+          e.touches[0].pageY - e.touches[1].pageY);
       }else{
         this.start = { x: e.touches[0].clientX - this.pointX, y: e.touches[0].clientY - this.pointY };
         this.panning = true;
@@ -99,7 +101,6 @@ export class SocketioService {
 
   moveImage(e){
     e.preventDefault();
-
     if(e instanceof TouchEvent && e.touches.length >= 2) {
         var dist = Math.hypot(
           e.touches[0].pageX - e.touches[1].pageX,
@@ -121,7 +122,9 @@ export class SocketioService {
         
         var xs = (xsssss - this.pointX)/this.scale;
         var ys = (ysssss - this.pointY)/this.scale;
-        this.scale = dist / 100;
+        // this.scale = dist / 100;
+        var delta = this.distance1 - dist;
+        (delta > 0) ? (this.scale /= 1.01) : (this.scale *= 1.01);
         
         this.pointX = xsssss - xs * -this.scale;
         this.pointY = ysssss - ys * -this.scale;
