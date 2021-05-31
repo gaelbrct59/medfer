@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { DeviceDetectorService } from "ngx-device-detector";
+// import ss from 'socket.io-stream';
+// import stream.Readable from 'stream';
+// import { Readable } from 'stream';
 
 @Injectable({
   providedIn: 'root'
@@ -12,11 +15,12 @@ export class SocketioService {
   scale: number; taken: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
   zoomOuter:HTMLElement;
   private distance1: number;
+  // private stream;
   constructor(private deviceService: DeviceDetectorService) {
-     
   }
-
+  
   setupSocketConnection(code: String) {
+    // this.stream = ss.createStream();
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
     this.socket = io(environment.SOCKET_ENDPOINT);
     this.socket.emit('code', code);
@@ -68,8 +72,8 @@ export class SocketioService {
       this.pointY = 0;
       this.start = { x: 0, y: 0 };
       
-      this.image=data.base64;
-      this.putImage(data.width, data.height);
+      this.image=data;
+      // this.putImage(data.width, data.height);
       this.setTransform();
      
     });
@@ -233,17 +237,18 @@ export class SocketioService {
   }
 
   sendImage(message: string | ArrayBuffer){
-    this.zoom = document.getElementById("zoom") as HTMLElement;
-    this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
     console.log("Send : Image");
-    const img = new Image();
-    img.src = message as string;
+    var rs = new Readable;
+    rs.push(message);
+    rs.push(null);
 
-    img.onload = () => {
-      this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
-                          height: img.height / this.zoomOuter.offsetHeight,
-                          base64: message });
-    }
+    var teststream = ss.createStream(message);
+
+    rs.pipe(teststream);
+    
+    this.socket.emit('image', teststream);
+
+    // ss(this.socket).emit('image', stream, message);
   }
   
 }
