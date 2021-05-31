@@ -59,7 +59,7 @@ export class SocketioService {
     
     this.socket.on('receiveImage', (data) => {
       this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
-
+      
       this.image = "";
       console.log("Image reçue");
       this.scale = 1;
@@ -174,16 +174,26 @@ export class SocketioService {
   }
 
   setTransform(): void{
-    this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
+    var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
+    console.log(tmp);
+    
+    // this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
+    // this.scale + ")";
+    this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
     this.scale + ")";
   }
-
+  
   setTransformP(pointx, pointy, scale): void{
     this.pointX = pointx;
     this.pointY = pointy;
     this.scale = scale;
-    this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
-    scale + ")";
+    var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
+    console.log(tmp);
+    
+    // this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
+    // scale + ")";
+    this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y* 50  + "%) scale(" +
+    this.scale + ")";
   }
 
   sendChange(): void {
@@ -230,18 +240,9 @@ export class SocketioService {
     img.src = message as string;
 
     img.onload = () => {
-      // if(img.width > this.zoomOuter.offsetWidth ||  img.height > this.zoomOuter.offsetHeight){
-        
-      //   this.socket.emit('image', {width: img.width > this.zoomOuter.offsetWidth?1:img.width/ this.zoomOuter.offsetWidth,
-      //                         height: img.height > this.zoomOuter.offsetHeight?1:img.height/ this.zoomOuter.offsetHeight,
-      //                         base64: message });
-      // }else{
-        this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
-                              height: img.height / this.zoomOuter.offsetHeight,
-                              base64: message });
-
-      // }
-
+      this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
+                          height: img.height / this.zoomOuter.offsetHeight,
+                          base64: message });
     }
   }
   
