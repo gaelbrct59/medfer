@@ -6,10 +6,8 @@ function getNameOfRoomBySocketid(socket){
 
 //Use ws, a Node.js WebSocket library
 const path = require('path');
-const ss = require('socket.io-stream');
 const express = require('express');
 const http = require('http');
-const fs = require('fs');
 const socketIO = require('socket.io');
 // const { tmpdir } = require('node:os');
 const app = express();
@@ -43,22 +41,19 @@ io.on('connection', (socket, test) => {
         // console.log(cheval(socket));
     });
 
-    ss(socket).on('image', function(stream) {
-        stream.pipe(fs.createWriteStream('file.txt'));
-    });
-
     console.log('a user connected');
     socket.on('disconnect', () => {
         console.log('user disconnected');
     });
 
-    
+    socket.on('my message', (msg) => {
+        console.log('message: ' + msg);
+    });
+
     socket.on('image', (data) => {
         console.log('image');
         // console.log(socket.rooms.get(socket.id));
-        console.log("on est coté serveur 1");
         io.to(getNameOfRoomBySocketid(socket)).emit('receiveImage', data)
-        console.log("on est coté serveur 2");
         // io.emit('receiveImage', `${msg}`);
     });
 
