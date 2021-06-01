@@ -24,6 +24,7 @@
     "bootstrap": "^4.6.0",
     "express": "^4.17.1",
     "ngx-device-detector": "^2.1.1",
+    "ngx-image-compress": "^11.0.3",
     "os": "^0.1.1",
     "package.json": "^2.0.1",
     "readable-stream": "^3.6.0",

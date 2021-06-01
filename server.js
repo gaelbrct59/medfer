@@ -46,10 +46,6 @@ io.on('connection', (socket, test) => {
         console.log('user disconnected');
     });
 
-    socket.on('my message', (msg) => {
-        console.log('message: ' + msg);
-    });
-
     socket.on('image', (data) => {
         console.log('image');
         // console.log(socket.rooms.get(socket.id));

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { DeviceDetectorService } from "ngx-device-detector";
+import { ImageCompressComponent } from '../image-compress/image-compress.component';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +13,7 @@ export class SocketioService {
   scale: number; taken: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
   zoomOuter:HTMLElement;
   private distance1: number;
-  constructor(private deviceService: DeviceDetectorService) {
+  constructor(private deviceService: DeviceDetectorService, private imageCompress: ImageCompressComponent) {
      
   }
 
@@ -61,15 +62,14 @@ export class SocketioService {
       this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
       
       this.image = "";
-      console.log("Image reçue");
+      console.log("Image reçue : ", data);
       this.scale = 1;
       this.taken = false;
       this.pointX = 0;
       this.pointY = 0;
       this.start = { x: 0, y: 0 };
       
-      this.image=data.base64;
-      this.putImage(data.width, data.height);
+      this.image=data;
       this.setTransform();
      
     });
@@ -219,31 +219,16 @@ export class SocketioService {
     return {x:percentX, y:percentY};
   }
 
-  putImage(percentX, percentY) : any {
-    var img = document.getElementById("container-media") as HTMLElement;
-
-    img.style.width = percentX *  100 + "%";
-    // img.style.maxHeight = percentY *  100 + "%";
-    // img.style.maxHeight = percentY *  100 + "%";
-  }
-
   closeSocketConnection() {
     this.image = "";
     this.socket.close();
   }
 
   sendImage(message: string | ArrayBuffer){
-    this.zoom = document.getElementById("zoom") as HTMLElement;
-    this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
     console.log("Send : Image");
-    const img = new Image();
-    img.src = message as string;
-
-    img.onload = () => {
-      this.socket.emit('image', {width: img.width / this.zoomOuter.offsetWidth,
-                          height: img.height / this.zoomOuter.offsetHeight,
-                          base64: message });
-    }
+    console.log(message);
+    this.imageCompress.compressFile(message, this.socket);
+    
   }
   
 }
