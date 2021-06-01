@@ -40,6 +40,7 @@ io.on('connection', (socket, test) => {
 
     socket.on('code', (code) => {
         socket.join(code);
+        // console.log(cheval(socket));
     });
 
     ss(socket).on('image', function(stream) {
