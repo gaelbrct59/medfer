@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { DeviceDetectorService } from "ngx-device-detector";
 import { ImageCompressComponent } from '../image-compress/image-compress.component';
+import { newArray } from '@angular/compiler/src/util';
 
 @Injectable({
   providedIn: 'root'
@@ -10,11 +11,12 @@ import { ImageCompressComponent } from '../image-compress/image-compress.compone
 export class SocketioService {
   socket;
   image: string;
-  scale: number; taken: boolean; pointX : number; pointY: number; start: any; zoom: HTMLElement; timer;
-  zoomOuter:HTMLElement;
+  imageSlice: any;
+  scale: number; taken: boolean; pointX: number; pointY: number; start: any; zoom: HTMLElement; timer;
+  zoomOuter: HTMLElement;
   private distance1: number;
   constructor(private deviceService: DeviceDetectorService, private imageCompress: ImageCompressComponent) {
-     
+    this.imageSlice = [];
   }
 
   setupSocketConnection(code: String) {
@@ -22,12 +24,12 @@ export class SocketioService {
     this.socket = io(environment.SOCKET_ENDPOINT);
     this.socket.emit('code', code);
     this.zoom = document.getElementById("zoom") as HTMLElement;
-    
-    if (this.deviceService.isMobile() || this.deviceService.isTablet()){
+
+    if (this.deviceService.isMobile() || this.deviceService.isTablet()) {
       this.zoom.addEventListener("touchmove", (e) => {
         this.moveImage(e);
       });
-      
+
       this.zoom.addEventListener("touchstart", (e) => {
         this.takeImage(e);
       });
@@ -35,7 +37,7 @@ export class SocketioService {
       this.zoom.addEventListener("touchend", () => {
         this.dropImage();
       });
-    }else{
+    } else {
       this.zoom.addEventListener("pointerdown", (e: MouseEvent) => {
         this.takeImage(e);
       });
@@ -57,114 +59,140 @@ export class SocketioService {
       var p = this.convertPercentintoPoint(e.percentx, e.percenty);
       this.setTransformP(p.x, p.y, e.scale);
     });
-    
+
     this.socket.on('receiveImage', (data) => {
       this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
-      
+
       this.image = "";
-      console.log("Image reçue : ", data);
+      console.log("Image reçue : ");
       this.scale = 1;
       this.taken = false;
       this.pointX = 0;
       this.pointY = 0;
       this.start = { x: 0, y: 0 };
-      
-      this.image=data;
-      this.setTransform();
-     
+
+      this.image = data;
+
+
+    });
+
+
+    this.socket.on('receiveImageSlice', (data) => {
+      this.image = "../../assets/chargement.gif";
+      if (data.i == 1) this.imageSlice = new Array(data.nb);
+      this.imageSlice[data.i - 1] = data.base64;
+      if (data.i == data.nb) {
+        this.image = this.imageSlice.join("");
+        this.scale = 1;
+        this.taken = false;
+        this.pointX = 0;
+        this.pointY = 0;
+        this.start = { x: 0, y: 0 };
+        this.setTransform();
+      }
+
+      this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
+
+      console.log("Image Slice reçue : ", data.i);
+      // console.log(this.imageSlice);
+
+      //this.image=data;
+
     });
   }
 
-  takeImage(e){
+  ab2str(buf) {
+    return String.fromCharCode.apply(null, new Uint8Array(buf));
+  }
+
+  takeImage(e) {
     if (e.cancelable) {
       e.preventDefault();
     }
-    if (e instanceof TouchEvent){
-      if (e.touches.length > 1){
+    if (e instanceof TouchEvent) {
+      if (e.touches.length > 1) {
         this.taken = false;
         this.distance1 = Math.hypot(e.touches[0].pageX - e.touches[1].pageX,
           e.touches[0].pageY - e.touches[1].pageY);
-      }else{
+      } else {
         this.start = { x: e.touches[0].clientX - this.pointX, y: e.touches[0].clientY - this.pointY };
         this.taken = true;
       }
-    }else{
+    } else {
       this.taken = true;
       this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
     }
-    
+
     console.log("mousedown");
   }
 
-  moveImage(e){
+  moveImage(e) {
     if (e.cancelable) {
       e.preventDefault();
-   }
-    
-    if(e instanceof TouchEvent && e.touches.length >= 2) {
-        var dist = Math.hypot(
-          e.touches[0].pageX - e.touches[1].pageX,
-          e.touches[0].pageY - e.touches[1].pageY);
+    }
 
-          var xsssss = Math.min(e.touches[0].clientX, e.touches[1].clientX) +
-        (e.touches[0].clientX + e.touches[1].clientX)/2;
-        
-        var ysssss = Math.min(e.touches[0].clientY, e.touches[1].clientY) +
-        (e.touches[0].clientY + e.touches[1].clientY)/2;
-        
-        var xs = (xsssss - this.pointX)/this.scale;
-        var ys = (ysssss - this.pointY)/this.scale;
-        // this.scale = dist / 100;
-        var delta = dist - this.distance1;
-        // console.log(delta, this.distance1, dist);
-        console.log(delta);
-        
-        (delta > 0) ? (this.scale *= 1.007) : (this.scale /= 1.007);
-        this.distance1 = dist;
-        if(delta = 0)
-          return;
-        var tmp = this.scale
-        this.pointX = xsssss - xs * tmp;
-        this.pointY = ysssss - ys * tmp;
-        this.setTransform();
+    if (e instanceof TouchEvent && e.touches.length >= 2) {
+      var dist = Math.hypot(
+        e.touches[0].pageX - e.touches[1].pageX,
+        e.touches[0].pageY - e.touches[1].pageY);
+
+      var xsssss = Math.min(e.touches[0].clientX, e.touches[1].clientX) +
+        (e.touches[0].clientX + e.touches[1].clientX) / 2;
+
+      var ysssss = Math.min(e.touches[0].clientY, e.touches[1].clientY) +
+        (e.touches[0].clientY + e.touches[1].clientY) / 2;
+
+      var xs = (xsssss - this.pointX) / this.scale;
+      var ys = (ysssss - this.pointY) / this.scale;
+      var delta = dist - this.distance1;
+      console.log(delta);
+
+      (delta > 0) ? (this.scale *= 1.01) : (this.scale /= 1.01);
+      this.distance1 = dist;
+      if (delta = 0)
+        return;
+      var tmp = this.scale
+      this.pointX = xsssss - xs * tmp;
+      this.pointY = ysssss - ys * tmp;
+      this.setTransform();
     }
 
     if (!this.taken) {
       return;
     }
-    
-    if (e instanceof TouchEvent){
-      if(e.touches.length < 2){
+
+    if (e instanceof TouchEvent) {
+      if (e.touches.length < 2) {
         this.pointX = (e.touches[0].clientX - this.start.x);
         this.pointY = (e.touches[0].clientY - this.start.y);
         this.setTransform();
       }
-    }else{
+    } else {
       this.pointX = (e.clientX - this.start.x);
-      this.pointY = (e.clientY - this.start.y);     
-      this.setTransform(); 
+      this.pointY = (e.clientY - this.start.y);
+      this.setTransform();
     }
   }
 
-  dropImage(){
+  dropImage() {
     this.taken = false;
     console.log("mouseup");
     this.sendChange();
   }
 
-  zoomImage(e){
-    
+  zoomImage(e) {
+
     if (e.cancelable) {
       e.preventDefault();
-   }
+    }
     clearInterval(this.timer);
     var xs = (e.clientX - this.pointX) / this.scale,
-    ys = (e.clientY - this.pointY) / this.scale,
-    delta = -e.deltaY;
+      ys = (e.clientY - this.pointY) / this.scale,
+      delta = -e.deltaY;
     (delta > 0) ? (this.scale *= 1.05) : (this.scale /= 1.05);
     this.pointX = e.clientX - xs * this.scale;
     this.pointY = e.clientY - ys * this.scale;
-    
+
     this.timer = setInterval(() => {
       this.sendChange();
       clearInterval(this.timer);
@@ -173,50 +201,52 @@ export class SocketioService {
     this.setTransform();
   }
 
-  setTransform(): void{
+  setTransform(): void {
     var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
     console.log(tmp);
-    
+
     // this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
     // this.scale + ")";
     this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
-    this.scale + ")";
+      this.scale + ")";
   }
-  
-  setTransformP(pointx, pointy, scale): void{
+
+  setTransformP(pointx, pointy, scale): void {
     this.pointX = pointx;
     this.pointY = pointy;
     this.scale = scale;
     var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
     console.log(tmp);
-    
+
     // this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
     // scale + ")";
-    this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y* 50  + "%) scale(" +
-    this.scale + ")";
+    this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
+      this.scale + ")";
   }
 
   sendChange(): void {
     var p = this.convertPointintoPercent(this.pointX, this.pointY);
-    this.socket.emit('change', {  scale: this.scale, 
-      percentx: p.x, 
+    this.socket.emit('change', {
+      scale: this.scale,
+      percentx: p.x,
       percenty: p.y,
-      pointx: this.pointX, 
+      pointx: this.pointX,
       pointy: this.pointY,
-      start: this.start });
+      start: this.start
+    });
   }
 
 
-  convertPercentintoPoint(percentX, percentY) : any{
+  convertPercentintoPoint(percentX, percentY): any {
     var posX = percentX * this.zoomOuter.offsetWidth;
     var posY = percentY * this.zoomOuter.offsetHeight;
-    return {x:posX, y:posY};
+    return { x: posX, y: posY };
   }
 
-  convertPointintoPercent(posX, posY) : any{
+  convertPointintoPercent(posX, posY): any {
     var percentX = posX / this.zoomOuter.offsetWidth;
-    var percentY = posY /this.zoomOuter.offsetHeight;
-    return {x:percentX, y:percentY};
+    var percentY = posY / this.zoomOuter.offsetHeight;
+    return { x: percentX, y: percentY };
   }
 
   closeSocketConnection() {
@@ -224,11 +254,19 @@ export class SocketioService {
     this.socket.close();
   }
 
-  sendImage(message: string | ArrayBuffer){
+  sendImage(message: string | ArrayBuffer) {
     console.log("Send : Image");
-    console.log(message);
     this.imageCompress.compressFile(message, this.socket);
-    
+
   }
-  
+
+  sendImageSlice(nb, i, message: ArrayBuffer | string) {
+    console.log("Send : Image slice");
+    this.socket.emit('image slice', {
+      nb: nb,
+      i: i,
+      base64: message
+    });
+  }
+
 }

@@ -16,12 +16,12 @@ const codeRoom = [];
 const port =  process.env.PORT || 2121;
 
 const server = http.createServer(app);
-const io = socketIO(server);
-// const io = socketIO(server, {
-//     cors: {
-//       origins: ['http://localhost:4200/']
-//     }
-//   });
+// const io = socketIO(server);
+const io = socketIO(server, {
+    cors: {
+      origins: ['http://localhost:4200/']
+    }
+  });
 
 app.set('io', io);
 
@@ -50,6 +50,13 @@ io.on('connection', (socket, test) => {
         console.log('image');
         // console.log(socket.rooms.get(socket.id));
         io.to(getNameOfRoomBySocketid(socket)).emit('receiveImage', data)
+        // io.emit('receiveImage', `${msg}`);
+    });
+
+    socket.on('image slice', (data) => {
+        console.log('image slice');
+        // console.log(socket.rooms.get(socket.id));
+        io.to(getNameOfRoomBySocketid(socket)).emit('receiveImageSlice', data)
         // io.emit('receiveImage', `${msg}`);
     });
 

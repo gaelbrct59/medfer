@@ -12,6 +12,7 @@
 .zoom-outer{
     border: solid 1px;
     overflow: hidden;
+    text-align: center;
 }
 
 #zoom {
