@@ -42,13 +42,13 @@ export class RepositoryComponent implements OnInit {
 
   fileSelected(e: File[]): void {
     if (e.length > 0) {
-      var nbSlice = Math.ceil(e[0].size / 40000) + 1;
+      var nbSlice = Math.ceil(e[0].size / 100000) + 1;
       console.log(e[0].size, nbSlice);
       var readerZ = new FileReader();
       readerZ.readAsDataURL(e[0]);
       readerZ.onload = (event) => {
         for (var i = 1; i <= nbSlice; i++) {
-          var base64data = event.target.result.slice((i-1)*40000, i*40000);
+          var base64data = event.target.result.slice((i-1)*100000, i*100000);
           this.socketService.sendImageSlice(nbSlice, i, base64data);
         }
       };
