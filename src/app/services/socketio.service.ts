@@ -92,18 +92,9 @@ export class SocketioService {
       }
 
       this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
-
-      console.log("Image Slice reçue : ", data.i);
-      // console.log(this.imageSlice);
-
-      //this.image=data;
-
     });
   }
 
-  ab2str(buf) {
-    return String.fromCharCode.apply(null, new Uint8Array(buf));
-  }
 
   takeImage(e) {
     if (e.cancelable) {
@@ -203,8 +194,6 @@ export class SocketioService {
 
   setTransform(): void {
     var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
-    console.log(tmp);
-
     // this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
     // this.scale + ")";
     this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
@@ -261,7 +250,6 @@ export class SocketioService {
   }
 
   sendImageSlice(nb, i, message: ArrayBuffer | string) {
-    console.log("Send : Image slice");
     this.socket.emit('image slice', {
       nb: nb,
       i: i,
