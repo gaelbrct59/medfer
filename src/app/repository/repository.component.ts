@@ -42,7 +42,7 @@ export class RepositoryComponent implements OnInit {
 
   fileSelected(e: File[]): void {
     if (e.length > 0) {
-      var nbSlice = Math.ceil(e[0].size / 100000) + 1;
+      var nbSlice = Math.ceil(e[0].size / 25000) + 1;
       console.log(e[0].size, nbSlice);
       var readerZ = new FileReader();
       readerZ.readAsDataURL(e[0]);
