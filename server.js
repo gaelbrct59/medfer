@@ -54,8 +54,6 @@ io.on('connection', (socket, test) => {
     });
 
     socket.on('image slice', (data) => {
-        console.log('image slice');
-        // console.log(socket.rooms.get(socket.id));
         io.to(getNameOfRoomBySocketid(socket)).emit('receiveImageSlice', data)
         // io.emit('receiveImage', `${msg}`);
     });

@@ -4,7 +4,6 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { AppRoutingModule, routingComponents } from './app-routing-module';
-import { NgxImageCompressService } from 'ngx-image-compress';
 
 @NgModule({
   declarations: [
@@ -16,7 +15,7 @@ import { NgxImageCompressService } from 'ngx-image-compress';
     NgbModule,
     AppRoutingModule
   ],
-  providers: [NgxImageCompressService],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

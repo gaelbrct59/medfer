@@ -2,8 +2,6 @@ import { Injectable } from '@angular/core';
 import { io } from 'socket.io-client';
 import { environment } from 'src/environments/environment';
 import { DeviceDetectorService } from "ngx-device-detector";
-import { ImageCompressComponent } from '../image-compress/image-compress.component';
-import { newArray } from '@angular/compiler/src/util';
 
 @Injectable({
   providedIn: 'root'
@@ -15,7 +13,7 @@ export class SocketioService {
   scale: number; taken: boolean; pointX: number; pointY: number; start: any; zoom: HTMLElement; timer;
   zoomOuter: HTMLElement;
   private distance1: number;
-  constructor(private deviceService: DeviceDetectorService, private imageCompress: ImageCompressComponent) {
+  constructor(private deviceService: DeviceDetectorService) {
     this.imageSlice = [];
   }
 
@@ -243,11 +241,6 @@ export class SocketioService {
     this.socket.close();
   }
 
-  sendImage(message: string | ArrayBuffer) {
-    console.log("Send : Image");
-    this.imageCompress.compressFile(message, this.socket);
-
-  }
 
   sendImageSlice(nb, i, message: ArrayBuffer | string) {
     this.socket.emit('image slice', {
