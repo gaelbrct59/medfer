@@ -17,6 +17,7 @@ export class RepositoryComponent implements OnInit {
     this.url = null;
     this.contenu_topbar = document.getElementById("actual-code") as HTMLElement;
     if (SocketioService.socket === undefined){
+      this.contenu_topbar.innerText = "";
       this.router.navigate(['../'], {relativeTo: this.route});
     }
   }

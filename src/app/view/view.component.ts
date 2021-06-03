@@ -46,11 +46,21 @@ export class ViewComponent implements OnInit {
                                                   pass : this.password});
     document.getElementById("modal-create-room").classList.add("hidden");
     document.getElementById("modal-code").classList.remove("hidden");
-
+    
     this.route.navigate(['/repository'], {queryParams: {code: this.code}});
   }
   
+  closeModal(){
+    document.getElementById("modal-create-room").classList.add("hidden");
+    document.getElementById("modal-enter-code").classList.add("hidden");
+    document.getElementById("modal-code").classList.add("hidden");
+    this.password = "";
+    this.existPassword = "";
+    
+  }
+  
   getExistPassword(){
+    console.log("etsets");
     SocketioService.socket.emit('verifypassword', { code: this.code, 
                                                     pass : this.existPassword});
     SocketioService.socket.on('responsepass', (isOk) => {
