@@ -12,13 +12,17 @@ export class RepositoryComponent implements OnInit {
   url: string | ArrayBuffer;
   contenu_topbar: HTMLElement;
   canvas: HTMLCanvasElement;
-  constructor(private route: ActivatedRoute, public socketService: SocketioService) {
+  constructor(private route: ActivatedRoute, private router: Router, public socketService: SocketioService) {
     this.code = "";
     this.url = null;
     this.contenu_topbar = document.getElementById("actual-code") as HTMLElement;
+    if (SocketioService.socket === undefined){
+      this.router.navigate(['../'], {relativeTo: this.route});
+    }
   }
 
   ngOnInit(): void {
+    
 
     this.route
       .queryParams
@@ -31,9 +35,12 @@ export class RepositoryComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    SocketioService.socket.emit("leave", this.code);
-    this.socketService.closeSocketConnection();
-    this.contenu_topbar.innerText = "";
+    if(!SocketioService.socket === undefined){
+      SocketioService.socket.emit("leave", this.code);
+      this.socketService.closeSocketConnection();
+      this.contenu_topbar.innerText = "";
+    }
+    
   }
 
   addMedia(): void {

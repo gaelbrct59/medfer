@@ -27,7 +27,6 @@ export class ViewComponent implements OnInit {
       SocketioService.socket.emit('code', this.code);
       console.log(SocketioService.socket.id);
       SocketioService.socket.on('response', (isOk) => {
-        console.log((isOk)?"OK CODE AJOUTE":"ERREUR CODE PAS AJOUTE");
         document.getElementById("modal-code").classList.remove("hidden");
         if (isOk){
           document.getElementById("modal-create-room").classList.remove("hidden");
@@ -58,8 +57,10 @@ export class ViewComponent implements OnInit {
       if(isOk){
         document.getElementById("modal-enter-code").classList.add("hidden");
         document.getElementById("modal-code").classList.remove("hidden");
-
+        
         this.route.navigate(['/repository'], {queryParams: {code: this.code}});
+      }else{
+        document.getElementById("modal-enter-code").innerHTML += "Error, bad password";
       }
     })
   }
