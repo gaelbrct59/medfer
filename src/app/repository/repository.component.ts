@@ -31,7 +31,7 @@ export class RepositoryComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    console.log("destroyed");
+    SocketioService.socket.emit("leave", this.code);
     this.socketService.closeSocketConnection();
     this.contenu_topbar.innerText = "";
   }

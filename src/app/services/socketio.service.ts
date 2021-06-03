@@ -22,10 +22,6 @@ export class SocketioService {
   }
 
   setupSocketConnection() {
-    console.log("setupSocketco" + SocketioService.socket.id);
-    
-    console.log("Connection on " + environment.SOCKET_ENDPOINT);
-    // SocketioService.socket.emit('code', code);
     this.zoom = document.getElementById("zoom") as HTMLElement;
     this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
 
@@ -102,8 +98,6 @@ export class SocketioService {
       this.taken = true;
       this.start = { x: e.clientX - this.pointX, y: e.clientY - this.pointY };
     }
-
-    console.log("mousedown");
   }
 
   moveImage(e) {
@@ -125,7 +119,6 @@ export class SocketioService {
       var xs = (xsssss - this.pointX) / this.scale;
       var ys = (ysssss - this.pointY) / this.scale;
       var delta = dist - this.distance1;
-      console.log(delta);
 
       (delta > 0) ? (this.scale *= 1.01) : (this.scale /= 1.01);
       this.distance1 = dist;
@@ -156,7 +149,6 @@ export class SocketioService {
 
   dropImage() {
     this.taken = false;
-    console.log("mouseup");
     this.sendChange();
   }
 
@@ -183,8 +175,6 @@ export class SocketioService {
 
   setTransform(): void {
     var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
-    // this.zoom.style.transform = "translate(" + this.pointX + "px, " + this.pointY + "px) scale(" +
-    // this.scale + ")";
     this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
       this.scale + ")";
   }
@@ -194,10 +184,6 @@ export class SocketioService {
     this.pointY = pointy;
     this.scale = scale;
     var tmp = this.convertPointintoPercent(this.pointX, this.pointY);
-    console.log(tmp);
-
-    // this.zoom.style.transform = "translate(" + pointx + "px, " + pointy + "px) scale(" +
-    // scale + ")";
     this.zoom.style.transform = "translate(" + tmp.x * 50 + "%, " + tmp.y * 50 + "%) scale(" +
       this.scale + ")";
   }
