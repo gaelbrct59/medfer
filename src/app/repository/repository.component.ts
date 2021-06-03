@@ -27,7 +27,7 @@ export class RepositoryComponent implements OnInit {
       })
     this.contenu_topbar.innerText = this.code;
 
-    this.socketService.setupSocketConnection(this.code);
+    this.socketService.setupSocketConnection();
   }
 
   ngOnDestroy(): void {

@@ -7,7 +7,7 @@ import { DeviceDetectorService } from "ngx-device-detector";
   providedIn: 'root'
 })
 export class SocketioService {
-  socket;
+  public static socket;
   image: string;
   imageSlice: any;
   scale: number; taken: boolean; pointX: number; pointY: number; start: any; zoom: HTMLElement; timer;
@@ -17,11 +17,17 @@ export class SocketioService {
     this.imageSlice = [];
   }
 
-  setupSocketConnection(code: String) {
+  public static connectToSocket(){
+    SocketioService.socket = io(environment.SOCKET_ENDPOINT);
+  }
+
+  setupSocketConnection() {
+    console.log("setupSocketco" + SocketioService.socket.id);
+    
     console.log("Connection on " + environment.SOCKET_ENDPOINT);
-    this.socket = io(environment.SOCKET_ENDPOINT);
-    this.socket.emit('code', code);
+    // SocketioService.socket.emit('code', code);
     this.zoom = document.getElementById("zoom") as HTMLElement;
+    this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
 
     if (this.deviceService.isMobile() || this.deviceService.isTablet()) {
       this.zoom.addEventListener("touchmove", (e) => {
@@ -53,43 +59,28 @@ export class SocketioService {
     }
 
 
-    this.socket.on('newPos', (e) => {
+    SocketioService.socket.on('newPos', (e) => {
       var p = this.convertPercentintoPoint(e.percentx, e.percenty);
       this.setTransformP(p.x, p.y, e.scale);
     });
 
-    this.socket.on('receiveImage', (data) => {
-      this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
-
-      this.image = "";
-      console.log("Image reçue : ");
-      this.scale = 1;
-      this.taken = false;
-      this.pointX = 0;
-      this.pointY = 0;
-      this.start = { x: 0, y: 0 };
-
-      this.image = data;
-
-
-    });
-
-
-    this.socket.on('receiveImageSlice', (data) => {
-      this.image = "../../assets/chargement.gif";
-      if (data.i == 1) this.imageSlice = new Array(data.nb);
-      this.imageSlice[data.i - 1] = data.base64;
-      if (data.i == data.nb) {
-        this.image = this.imageSlice.join("");
+    SocketioService.socket.on('receiveImageSlice', (data) => {
+      if (data.i == 1){
+        this.image = "../../assets/chargement.gif";
+        this.imageSlice = new Array(data.nb);
         this.scale = 1;
         this.taken = false;
         this.pointX = 0;
         this.pointY = 0;
         this.start = { x: 0, y: 0 };
         this.setTransform();
+      } 
+      this.imageSlice[data.i - 1] = data.base64;
+      if (data.i == data.nb) {
+        this.image = this.imageSlice.join("");
+        this.setTransform();
       }
 
-      this.zoomOuter = document.getElementsByClassName("zoom-outer")[0] as HTMLElement;
     });
   }
 
@@ -213,7 +204,7 @@ export class SocketioService {
 
   sendChange(): void {
     var p = this.convertPointintoPercent(this.pointX, this.pointY);
-    this.socket.emit('change', {
+    SocketioService.socket.emit('change', {
       scale: this.scale,
       percentx: p.x,
       percenty: p.y,
@@ -238,12 +229,12 @@ export class SocketioService {
 
   closeSocketConnection() {
     this.image = "";
-    this.socket.close();
+    SocketioService.socket.close();
   }
 
 
   sendImageSlice(nb, i, message: ArrayBuffer | string) {
-    this.socket.emit('image slice', {
+    SocketioService.socket.emit('image slice', {
       nb: nb,
       i: i,
       base64: message

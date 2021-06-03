@@ -2,11 +2,31 @@
     text-indent: 10%;
 }
 
-input, #buttons{
+#buttons{
     display: flex;
     justify-content: center;
 }
 
+#user-code{
+    display: block;
+    margin: auto;
+    width: 50%;
+}
+
 #enter-code, #generate-code{
     margin: 3vmin;
+}
+
+#modal-code{
+    position: absolute;
+    top: 10vh;
+    left: 0;
+    height: 80vh;
+    width: 100vw;
+    border: solid 1px;
+    background-color: aliceblue;
+}
+
+.hidden{
+    display: none;
 }

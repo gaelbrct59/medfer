@@ -12,7 +12,7 @@ const socketIO = require('socket.io');
 // const { tmpdir } = require('node:os');
 const app = express();
 console.log("Launched");
-const codeRoom = [];
+const codeRoom = {};
 const port =  process.env.PORT || 2121;
 
 const server = http.createServer(app);
@@ -34,11 +34,29 @@ app.get('/*', function(req,res) {
 });
 
 
-io.on('connection', (socket, test) => {
+io.on('connection', (socket) => {
 
     socket.on('code', (code) => {
-        socket.join(code);
-        // console.log(cheval(socket));
+        if(code in codeRoom){ //Room déja existante
+            io.to(socket.id).emit('response', false);
+        }else{ //Sinon créer room
+            console.log("code " + code + " reçu" + socket.id);
+            io.to(socket.id).emit('response', true);
+            codeRoom[code] = "";
+            
+        }
+    });
+
+    socket.on('getpassword', (obj) => {
+        codeRoom[obj.code] = obj.pass;
+        socket.join(obj.code);
+    })
+    
+    socket.on('verifypassword', (obj) => {
+        if(codeRoom[obj.code] == obj.pass){
+            socket.join(obj.code);
+        }
+        io.to(socket.id).emit('responsepass', codeRoom[obj.code] == obj.pass);
     });
 
     console.log('a user connected');
@@ -46,14 +64,16 @@ io.on('connection', (socket, test) => {
         console.log('user disconnected');
     });
 
-    socket.on('image', (data) => {
-        console.log('image');
-        // console.log(socket.rooms.get(socket.id));
-        io.to(getNameOfRoomBySocketid(socket)).emit('receiveImage', data)
-        // io.emit('receiveImage', `${msg}`);
-    });
+    // socket.on('image', (data) => {
+    //     console.log('image');
+    //     // console.log(socket.rooms.get(socket.id));
+    //     io.to(getNameOfRoomBySocketid(socket)).emit('receiveImage', data)
+    //     // io.emit('receiveImage', `${msg}`);
+    // });
 
     socket.on('image slice', (data) => {
+        console.log("image slice");
+        console.log(getNameOfRoomBySocketid(socket));
         io.to(getNameOfRoomBySocketid(socket)).emit('receiveImageSlice', data)
         // io.emit('receiveImage', `${msg}`);
     });

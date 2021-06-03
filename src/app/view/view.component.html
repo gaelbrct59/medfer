@@ -20,5 +20,19 @@
         <button id="generate-code" class="btn btn-primary"> 
             Generate & send code </button>
     </div> 
+    <div id="modal-code" class="hidden">
+        <div id="modal-enter-code" class="hidden"> 
+            This room already exist. Please enter the code to join
+            <input [value]="existPassword" (input)="existPassword = $event.target.value" id="user-code">
+            <button id="enter-code" class="btn btn-primary" (click)="getExistPassword()"> Add password </button>
+        </div>
+        
+        <div id="modal-create-room" class="hidden">
+            Please add code to your room
+            <input [value]="password" (input)="password = $event.target.value" id="user-code">
+            <button id="enter-code" class="btn btn-primary" (click)="getPassword()"> Add password </button>
+        </div>
+        
+    </div>
 </body>
 </html>
