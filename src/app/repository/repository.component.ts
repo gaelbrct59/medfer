@@ -36,11 +36,14 @@ export class RepositoryComponent implements OnInit {
   }
 
   ngOnDestroy(): void {
-    if(!SocketioService.socket === undefined){
+    console.log("destroyed");
+     if(SocketioService.socket){
+      console.log("leave");
+      
       SocketioService.socket.emit("leave", this.code);
       this.socketService.closeSocketConnection();
       this.contenu_topbar.innerText = "";
-    }
+     }
     
   }
 

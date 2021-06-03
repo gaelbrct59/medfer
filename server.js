@@ -66,6 +66,7 @@ io.on('connection', (socket) => {
     socket.on('leave', (code) => {
         const sids = io.of("").adapter.rooms;
         if(sids.get(code).size==1) delete codeRoom[code];
+        console.log(sids.get(code).size);
     });
 
     socket.on('image slice', (data) => {
