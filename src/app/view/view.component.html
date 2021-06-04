@@ -25,14 +25,14 @@
             This room already exist. Please enter the code to join
             <input [value]="existPassword" (input)="existPassword = $event.target.value" id="user-code">
             <button class="btn btn-primary" (click)="getExistPassword()"> Enter password </button>
-            <button (click)="closeModal()">close modal</button>
+            <button id="close-modal" (click)="closeModal()">close modal</button>
         </div>
         
         <div id="modal-create-room" class="hidden">
             Please add code to your room
             <input [value]="password" (input)="password = $event.target.value" id="user-code">
             <button class="btn btn-primary" (click)="getPassword()"> Add password </button>
-            <button (click)="closeModal()">close modal</button>
+            <button id="close-modal" (click)="closeModal()">close modal</button>
         </div>
         
     </div>

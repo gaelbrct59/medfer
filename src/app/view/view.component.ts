@@ -19,11 +19,15 @@ export class ViewComponent implements OnInit {
 
   ngOnInit(): void {
     SocketioService.connectToSocket();
+    document.getElementById("close-modal").addEventListener('click', () => {
+      console.log("clicckckkck");
+    })
   }
 
   getCode(){
     
     if(this.code.length > 0 /*&& this.nameuser.length > 0*/){
+      this.code = this.code.replace(/ /g,"_");
       SocketioService.socket.emit('code', this.code);
       console.log(SocketioService.socket.id);
       SocketioService.socket.on('response', (isOk) => {
@@ -42,35 +46,46 @@ export class ViewComponent implements OnInit {
   }
 
   getPassword(){
+    console.log("get password");
+    
     SocketioService.socket.emit('getpassword', {  code: this.code, 
                                                   pass : this.password});
-    document.getElementById("modal-create-room").classList.add("hidden");
+    this.closeModal();
     document.getElementById("modal-code").classList.remove("hidden");
     
     this.route.navigate(['/repository'], {queryParams: {code: this.code}});
   }
   
   closeModal(){
+    console.log("close modal");
+    
     document.getElementById("modal-create-room").classList.add("hidden");
     document.getElementById("modal-enter-code").classList.add("hidden");
     document.getElementById("modal-code").classList.add("hidden");
+    var tmp = document.getElementById("error");
+    if(tmp != undefined){
+      tmp.remove();
+    }
     this.password = "";
     this.existPassword = "";
     
   }
   
   getExistPassword(){
-    console.log("etsets");
+    console.log("get Exist password");
     SocketioService.socket.emit('verifypassword', { code: this.code, 
                                                     pass : this.existPassword});
     SocketioService.socket.on('responsepass', (isOk) => {
       if(isOk){
-        document.getElementById("modal-enter-code").classList.add("hidden");
-        document.getElementById("modal-code").classList.remove("hidden");
         
+        this.closeModal();
+        document.getElementById("modal-code").classList.remove("hidden");
         this.route.navigate(['/repository'], {queryParams: {code: this.code}});
       }else{
-        document.getElementById("modal-enter-code").innerHTML += "Error, bad password";
+        if(document.getElementById("error") == undefined)
+        {
+          document.getElementById("modal-enter-code").insertAdjacentHTML( 'beforeend', '<div id="error">Error, wrong password</div>');
+        }
       }
     })
   }
