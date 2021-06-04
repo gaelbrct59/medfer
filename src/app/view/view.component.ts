@@ -29,7 +29,6 @@ export class ViewComponent implements OnInit {
     if(this.code.length > 0 /*&& this.nameuser.length > 0*/){
       this.code = this.code.replace(/ /g,"_");
       SocketioService.socket.emit('code', this.code);
-      console.log(SocketioService.socket.id);
       SocketioService.socket.on('response', (isOk) => {
         document.getElementById("modal-code").classList.remove("hidden");
         if (isOk){
@@ -41,7 +40,7 @@ export class ViewComponent implements OnInit {
       })
       // this.route.navigate(['/repository'], {queryParams: {code: this.code}});
     }else{
-      alert("Remplir");
+      alert("Please add a code room");
     }
   }
 
@@ -50,7 +49,7 @@ export class ViewComponent implements OnInit {
     
     SocketioService.socket.emit('getpassword', {  code: this.code, 
                                                   pass : this.password});
-    this.closeModal();
+    document.getElementById("modal-create-room").classList.add("hidden");
     document.getElementById("modal-code").classList.remove("hidden");
     
     this.route.navigate(['/repository'], {queryParams: {code: this.code}});
@@ -71,14 +70,37 @@ export class ViewComponent implements OnInit {
     
   }
   
+  generateCode(){
+    // var codeExist = false;
+    // this.code="";
+    // var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    
+    // for (var i = 0; i < 4; i++){
+    //   this.code += possible.charAt(Math.floor(Math.random() * possible.length));
+    // }
+    // console.log(this.code);
+    // SocketioService.socket.emit('code', this.code);
+    // SocketioService.socket.on('response', (isOk) => {
+    //   if(isOk){
+    //     document.getElementById("modal-code").classList.remove("hidden");
+    //     document.getElementById("modal-create-room").classList.remove("hidden");
+    //   }
+    // })  
+    SocketioService.socket.emit('create code');
+    SocketioService.socket.on('newcode', (code) => {
+      this.code = code;
+      document.getElementById("modal-code").classList.remove("hidden");
+      document.getElementById("modal-create-room").classList.remove("hidden");
+    })
+    
+  }
+  
   getExistPassword(){
-    console.log("get Exist password");
     SocketioService.socket.emit('verifypassword', { code: this.code, 
                                                     pass : this.existPassword});
     SocketioService.socket.on('responsepass', (isOk) => {
       if(isOk){
-        
-        this.closeModal();
+        document.getElementById("modal-enter-code").classList.add("hidden");
         document.getElementById("modal-code").classList.remove("hidden");
         this.route.navigate(['/repository'], {queryParams: {code: this.code}});
       }else{

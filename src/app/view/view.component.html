@@ -17,22 +17,26 @@
     <input [value]="code" (input)="code = $event.target.value" id="user-code">
     <div id="buttons">
         <button id="enter-code" class="btn btn-primary" (click)="getCode()"> Send code </button>
-        <button id="generate-code" class="btn btn-primary"> 
+        <button id="generate-code" class="btn btn-primary" (click)="generateCode()"> 
             Generate & send code </button>
     </div> 
     <div id="modal-code" class="hidden">
         <div id="modal-enter-code" class="hidden"> 
-            This room already exist. Please enter the code to join
+                  This room already exist. Please enter the code to join
             <input [value]="existPassword" (input)="existPassword = $event.target.value" id="user-code">
-            <button class="btn btn-primary" (click)="getExistPassword()"> Enter password </button>
-            <button id="close-modal" (click)="closeModal()">close modal</button>
+            <div id="buttons">
+                <button class="btn btn-primary" (click)="getExistPassword()"> Enter password </button>
+                <button id="close-modal" (click)="closeModal()">close modal</button>
+            </div>
         </div>
         
         <div id="modal-create-room" class="hidden">
-            Please add code to your room
+                  Please add code to your room called "{{code}}"
             <input [value]="password" (input)="password = $event.target.value" id="user-code">
-            <button class="btn btn-primary" (click)="getPassword()"> Add password </button>
-            <button id="close-modal" (click)="closeModal()">close modal</button>
+            <div id="buttons">
+                <button class="btn btn-primary" (click)="getPassword()"> Add password </button>
+                <button id="close-modal" (click)="closeModal()">close modal</button>
+            </div>
         </div>
         
     </div>

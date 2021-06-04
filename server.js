@@ -36,6 +36,19 @@ app.get('/*', function(req,res) {
 
 io.on('connection', (socket) => {
 
+    socket.on('create code', () => {
+        var newcode = "";
+        var tmp = true;
+        while(tmp){
+            var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            for (var i = 0; i < 4; i++){
+                newcode += possible.charAt(Math.floor(Math.random() * possible.length));
+            }
+            tmp = newcode in codeRoom;
+        }
+        io.to(socket.id).emit('newcode', newcode);
+    });
+
     socket.on('code', (code) => {
         if(code in codeRoom){ //Room déja existante
             io.to(socket.id).emit('response', false);
@@ -65,8 +78,11 @@ io.on('connection', (socket) => {
 
     socket.on('leave', (code) => {
         const sids = io.of("").adapter.rooms;
-        if(sids.get(code).size==1) delete codeRoom[code];
-        console.log(sids.get(code).size);
+        console.log(code);
+        var tmp = sids.get(code);
+        if(tmp != undefined){
+            if(tmp.size==1) delete codeRoom[code];
+        }
     });
 
     socket.on('image slice', (data) => {
